@@ -1,3 +1,9 @@
+## 0.0.18
+
+- Add retry button for SMS resend functionality
+- Allow users to resend SMS code immediately if needed
+- Simplify UI by removing countdown timer
+
 ## 0.0.17
 
 - Document update

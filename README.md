@@ -155,6 +155,8 @@ The `specialAccount` option allows you to log in using methods other than phone 
 
 ### labelRetry
 
+- `labelRetry`: The widget (typically Text) displayed on the retry button that appears after the SMS resend timer expires. This button allows users to request a new SMS code.
+
 ### labelVerifySmsCodeButton
 
 ### labelCountryPicker
@@ -173,6 +175,15 @@ The `specialAccount` option allows you to log in using methods other than phone 
 ### hintTextPhoneNumberTextField
 
 ### hintTextSmsCodeTextField
+
+## SMS Resend Feature
+
+The package includes a retry button that allows users to resend SMS codes if they don't receive them. The retry button is always visible on the SMS code input screen, giving users immediate control to request a new code when needed.
+
+This feature provides:
+- Simple and intuitive user experience
+- Immediate access to resend functionality
+- Clear visual feedback with a retry button
 
 ## Error handling
 
@@ -361,6 +372,202 @@ Padding(
       throw e;
     }
   }
+```
+
+### Complete example from PhilGo App
+
+Here's a production-ready example from the PhilGo app that demonstrates a complete phone sign-in implementation with custom styling, animations, and error handling:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:easy_phone_sign_in/easy_phone_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
+
+class PhoneLoginScreen extends StatefulWidget {
+  const PhoneLoginScreen({super.key});
+
+  @override
+  State<PhoneLoginScreen> createState() => _PhoneLoginScreenState();
+}
+
+class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
+  bool _animateForm = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Trigger entrance animation
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _animateForm = true);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Phone Sign In'),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              colorScheme.primaryContainer.withOpacity(0.1),
+              colorScheme.secondaryContainer.withOpacity(0.05),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 600),
+              opacity: _animateForm ? 1 : 0,
+              child: AnimatedSlide(
+                duration: const Duration(milliseconds: 600),
+                offset: _animateForm ? Offset.zero : const Offset(0, 0.1),
+                child: Card(
+                  elevation: 0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Theme(
+                      // Local theme override for button styling
+                      data: theme.copyWith(
+                        elevatedButtonTheme: ElevatedButtonThemeData(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: colorScheme.primary,
+                            foregroundColor: colorScheme.onPrimary,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 16,
+                              horizontal: 24,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                      child: PhoneSignIn(
+                        // Phone number completion callback
+                        // Automatically adds country code based on local format
+                        onCompletePhoneNumber: (String phoneNumber) {
+                          // Korean numbers starting with '10' (remove leading 0)
+                          if (phoneNumber.startsWith('10')) {
+                            return '+82$phoneNumber';
+                          }
+                          // Philippine numbers starting with '9'
+                          else if (phoneNumber.startsWith('9')) {
+                            return '+63$phoneNumber';
+                          }
+                          // Return as-is for other formats
+                          return phoneNumber;
+                        },
+
+                        // Success callback
+                        onSignInSuccess: () {
+                          // Navigate to home screen
+                          context.go('/home');
+                        },
+
+                        // Error callback
+                        onSignInFailed: (FirebaseAuthException error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                error.message ?? 'Phone authentication failed',
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        },
+
+                        // Special accounts for App Store review
+                        specialAccounts: const SpecialAccounts(
+                          reviewEmail: 'review@email.com',
+                          reviewPassword: '12345zB,*c',
+                          reviewPhoneNumber: '+11234567890',
+                          reviewSmsCode: '123456',
+                          emailLogin: true, // Allow email login for testing
+                        ),
+
+                        // Custom labels and hints
+                        labelPhoneNumber: Text(
+                          'Enter your phone number',
+                          style: theme.textTheme.titleMedium,
+                        ),
+                        labelUnderPhoneNumberTextField: Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            'Example: 09123456789 or 01012345678',
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                        labelPhoneNumberSelected: Text(
+                          'Phone Number',
+                          style: theme.textTheme.titleMedium,
+                        ),
+                        labelOnSmsCodeTextField: const Text(
+                          'Enter SMS verification code',
+                        ),
+                        hintTextSmsCodeTextField: 'SMS Code',
+                        labelRetry: const Text('Resend SMS'),
+                        labelVerifySmsCodeButton: const Text('Verify Code'),
+                        labelVerifyPhoneNumberButton: Text(
+                          'Send SMS Code',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: colorScheme.onPrimary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        hintTextPhoneNumberTextField: 'Phone Number',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+This example demonstrates:
+- **Entrance animations**: Smooth fade and slide animations when the screen loads
+- **Custom theming**: Local theme override for button styling
+- **Gradient background**: Subtle gradient using theme colors
+- **Country code auto-detection**: Automatically adds +82 for Korean numbers and +63 for Philippine numbers
+- **Review account support**: Special accounts for App Store review process
+- **Error handling**: User-friendly error messages with SnackBar
+- **Responsive design**: Works well on all screen sizes
+- **SMS resend button**: Simple retry button for requesting new SMS codes
+
+### Minimal Example
+
+For a quick implementation with default styling:
+
+```dart
+PhoneSignIn(
+  onSignInSuccess: () {
+    // Handle successful sign in
+    Navigator.pushReplacementNamed(context, '/home');
+  },
+  onSignInFailed: (FirebaseAuthException error) {
+    // Handle sign in failure
+    print('Sign in failed: ${error.message}');
+  },
+)
 ```
 
 ## Exceptions
