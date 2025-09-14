@@ -1,6 +1,10 @@
 # Easy Phone Sign In
 
-This Flutter package is designed to streamline the integration of Google's phone sign-in functionality into your application, making the process seamless and efficient.
+What this package is for?
+- If you experience that the Apple review team rejects your app because they can't sign-in with the phone number, this package is for you.
+- This package provides a complete phone number sign-in experience with a fake phone number and SMS code for review purpose.
+- Use this package to pass the Apple review process smoothly while supporting real phone number sign-in for your users.
+
 
 ## Features
 
