@@ -1,8 +1,8 @@
 # Easy Phone Sign In
 
 What this package is for?
-- If you experience that the Apple review team rejects your app because they can't sign-in with the phone number, this package is for you.
-- This package provides a complete phone number sign-in experience with a fake phone number and SMS code for review purpose.
+- If you are experiencing that the Apple review team rejects your app because they can't sign-in with the phone number, then this package is for you.
+- This package provides a complete phone number sign-in experience with a fake phone number and SMS code for passing iOS review purposes.
 - Use this package to pass the Apple review process smoothly while supporting real phone number sign-in for your users.
 
 
