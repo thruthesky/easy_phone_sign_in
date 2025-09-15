@@ -126,7 +126,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             '${phoneNumber.substring(0, 4)}-${phoneNumber.substring(4, 7)}-${phoneNumber.substring(7)}';
                       }
 
-                      debugPrint('Return -> display phone number: $phoneNumber');
+                      debugPrint(
+                          'Return -> display phone number: $phoneNumber');
                       return phoneNumber;
                     },
                     onSignInSuccess: onSignInSuccess,
@@ -222,7 +223,8 @@ class Box extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        child: child // This is the child widget that will be displayed inside the box
+        child:
+            child // This is the child widget that will be displayed inside the box
         );
   }
 }
