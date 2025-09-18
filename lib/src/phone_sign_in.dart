@@ -178,9 +178,7 @@ class _PhoneSignInState extends State<PhoneSignIn> {
           debug(
               '---> PhoneSignIn::_resendSms() -> verificationFailed: ${e.message}');
           hideProgress();
-          if (widget.onSignInFailed != null) {
-            widget.onSignInFailed!(e);
-          }
+          widget.onSignInFailed(e);
         },
         codeSent: (String verificationId, int? resendToken) {
           // SMS 재전송 성공
@@ -312,7 +310,7 @@ class _PhoneSignInState extends State<PhoneSignIn> {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.4),
+                        .withValues(alpha: 0.4),
                   ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -631,13 +629,13 @@ class _PhoneSignInState extends State<PhoneSignIn> {
   }
 
   /// 로그인 성공 처리
-  onSignInSuccess() {
+  void onSignInSuccess() {
     hideProgress();
     widget.onSignInSuccess.call();
   }
 
   /// 로그인 실패 처리
-  onSignInFailed(FirebaseAuthException e) {
+  void onSignInFailed(FirebaseAuthException e) {
     hideProgress();
     widget.onSignInFailed.call(e);
   }
@@ -666,7 +664,7 @@ class _PhoneSignInState extends State<PhoneSignIn> {
   ///
   /// 전화번호 필드에 이메일:비밀번호 형식으로 입력 시 처리
   /// 예: test@email.com:password123
-  doEmailLogin([String? emailPassword]) async {
+  void doEmailLogin([String? emailPassword]) async {
     debug('BEGIN: doEmailLogin()');
 
     emailPassword ??= phoneNumberController.text;
@@ -723,7 +721,7 @@ class _PhoneSignInState extends State<PhoneSignIn> {
   /// 앱 리뷰용 전화번호 처리
   ///
   /// 실제 SMS 전송 없이 SMS 입력 화면으로 바로 전환
-  doReviewPhoneNumberSubmit() {
+  void doReviewPhoneNumberSubmit() {
     if (context.mounted) {
       debug('Begin: doReviewPhoneNumberSubmit()');
       setState(() {
@@ -736,7 +734,7 @@ class _PhoneSignInState extends State<PhoneSignIn> {
   /// 앱 리뷰용 SMS 코드 확인
   ///
   /// 미리 정의된 코드와 비교하여 일치하면 이메일 로그인 수행
-  doReviewSmsCodeSubmit() {
+  void doReviewSmsCodeSubmit() {
     if (smsCodeController.text == widget.specialAccounts?.reviewSmsCode) {
       // 리뷰 계정으로 이메일 로그인
       return doEmailLogin(
@@ -754,7 +752,7 @@ class _PhoneSignInState extends State<PhoneSignIn> {
   /// 디버그 로그 출력
   ///
   /// widget.debug가 true일 때만 로그 출력
-  debug(String message) {
+  void debug(String message) {
     if (widget.debug) {
       log("[🐈] $message");
     }
