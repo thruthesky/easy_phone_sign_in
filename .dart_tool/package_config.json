@@ -3,7 +3,7 @@
   "packages": [
     {
       "name": "_flutterfire_internals",
-      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/_flutterfire_internals-1.3.58",
+      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/_flutterfire_internals-1.3.59",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -51,31 +51,31 @@
     },
     {
       "name": "firebase_auth",
-      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/firebase_auth-5.6.2",
+      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/firebase_auth-5.7.0",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "firebase_auth_platform_interface",
-      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/firebase_auth_platform_interface-7.7.2",
+      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/firebase_auth_platform_interface-7.7.3",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "firebase_auth_web",
-      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/firebase_auth_web-5.15.2",
+      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/firebase_auth_web-5.15.3",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
       "name": "firebase_core",
-      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/firebase_core-3.15.1",
+      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/firebase_core-3.15.2",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "firebase_core_platform_interface",
-      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/firebase_core_platform_interface-6.0.0",
+      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/firebase_core_platform_interface-6.0.2",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -153,9 +153,9 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/meta-1.16.0",
+      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/meta-1.17.0",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.5"
     },
     {
       "name": "path",
@@ -207,7 +207,7 @@
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/test_api-0.7.6",
+      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/test_api-0.7.7",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -219,9 +219,9 @@
     },
     {
       "name": "universal_io",
-      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/universal_io-2.2.2",
+      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/universal_io-2.3.1",
       "packageUri": "lib/",
-      "languageVersion": "2.17"
+      "languageVersion": "3.6"
     },
     {
       "name": "vector_math",
@@ -231,9 +231,9 @@
     },
     {
       "name": "vm_service",
-      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/vm_service-15.0.0",
+      "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/vm_service-15.0.2",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.5"
     },
     {
       "name": "web",
@@ -249,8 +249,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.9.2",
+  "generatorVersion": "3.10.0",
   "flutterRoot": "file:///Users/thruthesky/bin/flutter",
-  "flutterVersion": "3.35.6",
+  "flutterVersion": "3.38.2",
   "pubCache": "file:///Users/thruthesky/.pub-cache"
 }
