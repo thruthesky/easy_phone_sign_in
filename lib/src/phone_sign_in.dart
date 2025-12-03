@@ -26,6 +26,7 @@ class PhoneSignIn extends StatefulWidget {
     this.onDisplayPhoneNumber,
     required this.onSignInSuccess,
     required this.onSignInFailed,
+    this.onSmsCodeInputChanged,
     this.labelPhoneNumber,
     this.labelUnderPhoneNumberTextField,
     this.labelVerifyPhoneNumberButton,
@@ -69,6 +70,11 @@ class PhoneSignIn extends StatefulWidget {
   /// 로그인 실패 시 호출되는 콜백
   /// FirebaseAuthException 에러를 파라미터로 받음
   final void Function(FirebaseAuthException) onSignInFailed;
+
+  /// SMS 코드 입력 화면 전환 시 호출되는 콜백
+  /// true: SMS 입력 화면으로 전환됨
+  /// false: 전화번호 입력 화면으로 돌아감
+  final void Function(bool)? onSmsCodeInputChanged;
 
   // UI 라벨 커스터마이징을 위한 위젯들
   final Widget? labelPhoneNumber;
@@ -417,6 +423,8 @@ class _PhoneSignInState extends State<PhoneSignIn> {
                             showSmsCodeInput = true; // SMS 입력 화면으로 전환
                             hideProgress();
                           });
+                          // SMS 입력 화면 전환 콜백 호출
+                          widget.onSmsCodeInputChanged?.call(true);
                         },
 
                         // Android 전용: SMS 자동 감지 타임아웃
@@ -434,6 +442,8 @@ class _PhoneSignInState extends State<PhoneSignIn> {
                             setState(() {
                               showSmsCodeInput = false; // 전화번호 입력으로 돌아가기
                             });
+                            // 전화번호 입력 화면으로 돌아감 콜백 호출
+                            widget.onSmsCodeInputChanged?.call(false);
                             hideProgress();
                           }
                         },
@@ -658,6 +668,8 @@ class _PhoneSignInState extends State<PhoneSignIn> {
       phoneNumberController.clear();
       smsCodeController.clear();
     });
+    // 전화번호 입력 화면으로 돌아감 콜백 호출
+    widget.onSmsCodeInputChanged?.call(false);
   }
 
   /// 이메일 로그인 처리 (테스트/개발용)
@@ -728,6 +740,8 @@ class _PhoneSignInState extends State<PhoneSignIn> {
         showSmsCodeInput = true;
         progress = false;
       });
+      // SMS 입력 화면 전환 콜백 호출
+      widget.onSmsCodeInputChanged?.call(true);
     }
   }
 
