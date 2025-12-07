@@ -249,8 +249,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.10.0",
+  "generatorVersion": "3.10.1",
   "flutterRoot": "file:///Users/thruthesky/bin/flutter",
-  "flutterVersion": "3.38.2",
+  "flutterVersion": "3.38.3",
   "pubCache": "file:///Users/thruthesky/.pub-cache"
 }
