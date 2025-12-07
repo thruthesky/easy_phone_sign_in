@@ -768,7 +768,7 @@ class _PhoneSignInState extends State<PhoneSignIn> {
   /// widget.debug가 true일 때만 로그 출력
   void debug(String message) {
     if (widget.debug) {
-      log("[🐈] $message");
+      // log("[🐈] $message");
     }
   }
 }
