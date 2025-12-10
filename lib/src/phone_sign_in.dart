@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 // import 'package:country_picker/country_picker.dart';
 import 'package:easy_phone_sign_in/easy_phone_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
