@@ -43,6 +43,10 @@ class PhoneSignIn extends StatefulWidget {
     this.specialAccounts,
     this.isPhoneNumberRegistered,
     this.debug = false,
+    this.onFocusPhoneNumberTextField,
+    this.onUnfocusPhoneNumberTextField,
+    this.onFocusSmsCodeTextField,
+    this.onUnfocusSmsCodeTextField,
   });
 
   /// 기본 국가 코드 (예: 'KR', 'PH')
@@ -106,6 +110,11 @@ class PhoneSignIn extends StatefulWidget {
   /// 디버그 로그 출력 여부
   final bool debug;
 
+  final Function()? onFocusPhoneNumberTextField;
+  final Function()? onUnfocusPhoneNumberTextField;
+  final Function()? onFocusSmsCodeTextField;
+  final Function()? onUnfocusSmsCodeTextField;
+
   @override
   State<PhoneSignIn> createState() => _PhoneSignInState();
 }
@@ -132,6 +141,9 @@ class _PhoneSignInState extends State<PhoneSignIn> {
   /// SMS 코드 입력 UI 표시 여부
   bool showSmsCodeInput = false;
 
+  final FocusNode _focusNodePhoneNumber = FocusNode();
+  final FocusNode _focusNodeSmsCode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -140,6 +152,26 @@ class _PhoneSignInState extends State<PhoneSignIn> {
     if (widget.countryCode != null) {
       country = Country.parse(widget.countryCode!);
     }
+
+    _focusNodePhoneNumber.addListener(() {
+      if (_focusNodePhoneNumber.hasFocus) {
+        // debug('Phone number TextField focused');
+        widget.onFocusPhoneNumberTextField?.call();
+      } else {
+        // debug('Phone number TextField unfocused');
+        widget.onUnfocusPhoneNumberTextField?.call();
+      }
+    });
+
+    _focusNodeSmsCode.addListener(() {
+      if (_focusNodeSmsCode.hasFocus) {
+        // debug('SMS code TextField focused');
+        widget.onFocusSmsCodeTextField?.call();
+      } else {
+        // debug('SMS code TextField unfocused');
+        widget.onUnfocusSmsCodeTextField?.call();
+      }
+    });
   }
 
   @override
@@ -147,6 +179,8 @@ class _PhoneSignInState extends State<PhoneSignIn> {
     // 컨트롤러 정리
     phoneNumberController.dispose();
     smsCodeController.dispose();
+    _focusNodePhoneNumber.dispose();
+    _focusNodeSmsCode.dispose();
     super.dispose();
   }
 
@@ -291,6 +325,7 @@ class _PhoneSignInState extends State<PhoneSignIn> {
           widget.labelPhoneNumber ?? const Text('Enter your phone number'),
           // 전화번호 입력 필드
           TextField(
+            focusNode: _focusNodePhoneNumber,
             controller: phoneNumberController,
             keyboardType: TextInputType.phone,
             style: Theme.of(context).textTheme.titleLarge,
@@ -470,6 +505,7 @@ class _PhoneSignInState extends State<PhoneSignIn> {
           widget.labelOnSmsCodeTextField ?? const Text('Enter the SMS code'),
           // SMS 코드 입력 필드
           TextField(
+            focusNode: _focusNodeSmsCode,
             controller: smsCodeController,
             keyboardType: TextInputType.number,
             style: Theme.of(context).textTheme.titleLarge,
