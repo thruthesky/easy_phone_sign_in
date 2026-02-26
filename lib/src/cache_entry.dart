@@ -12,7 +12,7 @@
 /// );
 ///
 /// if (entry.isExpired) {
-///   print('캐시가 만료되었습니다.');
+/////   print('캐시가 만료되었습니다.');
 /// }
 /// ```
 class CacheEntry<T> {
