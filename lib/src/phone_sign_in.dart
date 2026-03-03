@@ -425,82 +425,106 @@ class _PhoneSignInState extends State<PhoneSignIn> {
                           'Begin: FirebaseAuth.instance.verifyPhoneNumber with completePhoneNumber: $completePhoneNumber');
 
                       // ===== Firebase 전화번호 인증 시작 =====
-                      await FirebaseAuth.instance.verifyPhoneNumber(
-                        timeout: const Duration(seconds: 60),
-                        phoneNumber: completePhoneNumber,
+                      try {
+                        await FirebaseAuth.instance.verifyPhoneNumber(
+                          timeout: const Duration(seconds: 60),
+                          phoneNumber: completePhoneNumber,
 
-                        // Android에서 SMS 자동 감지 시 호출
-                        // SMS 코드 입력 없이 자동으로 로그인 처리
-                        verificationCompleted:
-                            (PhoneAuthCredential credential) async {
-                          debug('verificationCompleted: $credential');
-                          // 주의: Android에서 자동 로그인 시 time-expire나 invalid sms code 에러가
-                          // 발생할 수 있으나 무시해도 됨
+                          // Android에서 SMS 자동 감지 시 호출
+                          // SMS 코드 입력 없이 자동으로 로그인 처리
+                          verificationCompleted:
+                              (PhoneAuthCredential credential) async {
+                            debug('verificationCompleted: $credential');
+                            // 주의: Android에서 자동 로그인 시 time-expire나 invalid sms code 에러가
+                            // 발생할 수 있으나 무시해도 됨
 
-                          try {
-                            // linkCurrentUser 옵션에 따라 처리 분기
-                            if (widget.linkCurrentUser) {
-                              // 현재 사용자(익명 등)와 전화번호 연결
-                              debug(
-                                  'linkCurrentUser options is set. Linking current user account with the phone number ');
-                              await linkOrSignInWithCredential(credential);
-                            } else {
-                              // 새로운 전화번호 계정으로 로그인
-                              debug(
-                                  'linkCurrentUser options is NOT set. Signing in with the phone number.');
-                              await FirebaseAuth.instance
-                                  .signInWithCredential(credential);
+                            try {
+                              // linkCurrentUser 옵션에 따라 처리 분기
+                              if (widget.linkCurrentUser) {
+                                // 현재 사용자(익명 등)와 전화번호 연결
+                                debug(
+                                    'linkCurrentUser options is set. Linking current user account with the phone number ');
+                                await linkOrSignInWithCredential(credential);
+                              } else {
+                                // 새로운 전화번호 계정으로 로그인
+                                debug(
+                                    'linkCurrentUser options is NOT set. Signing in with the phone number.');
+                                await FirebaseAuth.instance
+                                    .signInWithCredential(credential);
+                              }
+
+                              onSignInSuccess();
+                            } on FirebaseAuthException catch (e) {
+                              onSignInFailed(e);
                             }
+                          },
 
-                            onSignInSuccess();
-                          } on FirebaseAuthException catch (e) {
+                          // 전화번호 검증 실패 또는 Firebase 오류 시 호출
+                          // 주의: SMS 코드 검증 실패가 아닌 전화번호 자체 검증 실패
+                          verificationFailed: (FirebaseAuthException e) {
+                            debug(
+                                '---> verificationFailed: code=${e.code}, message=${e.message}');
                             onSignInFailed(e);
-                          }
-                        },
+                          },
 
-                        // 전화번호 검증 실패 또는 Firebase 오류 시 호출
-                        // 주의: SMS 코드 검증 실패가 아닌 전화번호 자체 검증 실패
-                        verificationFailed: (FirebaseAuthException e) {
-                          debug(
-                              '---> PhoneSignIn::build() -> verificationFailed: $e');
+                          // 전화번호 검증 성공, SMS 코드 전송됨
+                          // SMS 코드 입력 UI로 전환
+                          codeSent:
+                              (String verificationId, int? resendToken) {
+                            debug(
+                                '---> codeSent: verificationId=$verificationId');
+                            this.verificationId = verificationId;
+                            setState(() {
+                              showSmsCodeInput = true; // SMS 입력 화면으로 전환
+                              hideProgress();
+                            });
+                            // SMS 입력 화면 전환 콜백 호출
+                            widget.onSmsCodeInputChanged?.call(true);
+                          },
+
+                          // Android 전용: SMS 자동 감지 타임아웃
+                          // 네트워크 불안정 등으로 발생 가능
+                          codeAutoRetrievalTimeout: (String verificationId) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content:
+                                      widget.codeAutoRetrievalTimeoutText ??
+                                          const Text(
+                                            'SMS code auto-resolution timed out. Please retry.',
+                                          ),
+                                ),
+                              );
+                              setState(() {
+                                showSmsCodeInput =
+                                    false; // 전화번호 입력으로 돌아가기
+                              });
+                              // 전화번호 입력 화면으로 돌아감 콜백 호출
+                              widget.onSmsCodeInputChanged?.call(false);
+                              hideProgress();
+                            }
+                          },
+                        );
+                        debug('verifyPhoneNumber 호출 완료 (await 반환)');
+                      } catch (e, stackTrace) {
+                        debug(
+                            'verifyPhoneNumber 예외 발생: $e');
+                        debug('스택 트레이스: $stackTrace');
+                        hideProgress();
+                        if (e is FirebaseAuthException) {
                           onSignInFailed(e);
-                        },
-
-                        // 전화번호 검증 성공, SMS 코드 전송됨
-                        // SMS 코드 입력 UI로 전환
-                        codeSent: (String verificationId, int? resendToken) {
-                          debug(
-                              '---> PhoneSignIn::build() -> codeSent: $verificationId');
-                          this.verificationId = verificationId;
-                          setState(() {
-                            showSmsCodeInput = true; // SMS 입력 화면으로 전환
-                            hideProgress();
-                          });
-                          // SMS 입력 화면 전환 콜백 호출
-                          widget.onSmsCodeInputChanged?.call(true);
-                        },
-
-                        // Android 전용: SMS 자동 감지 타임아웃
-                        // 네트워크 불안정 등으로 발생 가능
-                        codeAutoRetrievalTimeout: (String verificationId) {
+                        } else {
+                          // FirebaseAuthException이 아닌 다른 예외
+                          debug('예상하지 못한 예외 타입: ${e.runtimeType}');
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: widget.codeAutoRetrievalTimeoutText ??
-                                    const Text(
-                                      'SMS code auto-resolution timed out. Please retry.',
-                                    ),
+                                content: Text('인증 오류: $e'),
                               ),
                             );
-                            setState(() {
-                              showSmsCodeInput = false; // 전화번호 입력으로 돌아가기
-                            });
-                            // 전화번호 입력 화면으로 돌아감 콜백 호출
-                            widget.onSmsCodeInputChanged?.call(false);
-                            hideProgress();
                           }
-                        },
-                      );
+                        }
+                      }
                     },
                     // 버튼 라벨 (위젯이나 기본 텍스트)
                     child: widget.labelVerifyPhoneNumberButton ??
@@ -822,7 +846,7 @@ class _PhoneSignInState extends State<PhoneSignIn> {
   /// widget.debug가 true일 때만 로그 출력
   void debug(String message) {
     if (widget.debug) {
-      // log("[🐈] $message");
+      print("[PhoneSignIn] $message");
     }
   }
 }
