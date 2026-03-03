@@ -43,6 +43,7 @@ class PhoneSignIn extends StatefulWidget {
     this.specialAccounts,
     this.isPhoneNumberRegistered,
     this.debug = false,
+    this.onValidatePhoneNumber,
     this.onFocusPhoneNumberTextField,
     this.onUnfocusPhoneNumberTextField,
     this.onFocusSmsCodeTextField,
@@ -109,6 +110,11 @@ class PhoneSignIn extends StatefulWidget {
 
   /// 디버그 로그 출력 여부
   final bool debug;
+
+  /// 전화번호 검증 콜백
+  /// 국제 형식으로 변환된 전화번호를 받아 검증 수행
+  /// null 반환 시 유효, String 반환 시 에러 메시지로 SnackBar 표시
+  final String? Function(String)? onValidatePhoneNumber;
 
   final Function()? onFocusPhoneNumberTextField;
   final Function()? onUnfocusPhoneNumberTextField;
@@ -392,6 +398,20 @@ class _PhoneSignInState extends State<PhoneSignIn> {
                         throw Exception(
                           '@phone_sign_in/malformed-phone-number Phone number is empty or malformed.',
                         );
+                      }
+
+                      // ===== 전화번호 검증 (화이트리스트 등) =====
+                      if (widget.onValidatePhoneNumber != null) {
+                        final validationError =
+                            widget.onValidatePhoneNumber!(completePhoneNumber);
+                        if (validationError != null) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(validationError)),
+                            );
+                          }
+                          return;
+                        }
                       }
 
                       // 로딩 표시 시작
